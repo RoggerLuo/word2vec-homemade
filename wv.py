@@ -1,17 +1,10 @@
 import db_model
 import jieba
 import json
-ignoreds = [
-    '，', ',', '的', '是', '\n', ' '
-]
-
-# import random
 import numpy as np
-# random.seed(31415)
-# np.random.seed(9265)
-dimVectors = 16
 
-# 意思是 input vector是随机启动， output vector是zeros
+dimVectors = 8
+ignoreds = ['，', ',', '的', '是', '\n', ' ']
 
 
 def getStartVector():
@@ -29,12 +22,12 @@ def getStartVector():
 
 def segment(string):
     seg_list = jieba.lcut(string)  # 默认是精确模式
-    print('||||||||||||||分词|||||||||||||')
+    # print('||||||||||||||分词|||||||||||||')
     return seg_list
 
 
 def filterWord(arr):
-    print('||||||||||||||筛选过滤|||||||||||||')
+    # print('||||||||||||||筛选过滤|||||||||||||')
     filteredArr = []
     for word in arr:
         if word not in ignoreds:
@@ -59,7 +52,7 @@ def getIdAndVector(word):
 def getDataset(string, windowLength=10):
     wordList = segment(string)
     arr = filterWord(wordList)
-    print('||||||||||||||滑窗,步长为|||||||||||||')
+    # print('||||||||||||||滑窗,步长为|||||||||||||')
     # print(windowLength)
     tokens = {}
     trainingPairs = []
@@ -71,9 +64,9 @@ def getDataset(string, windowLength=10):
         word = arr[index]
         start = index - c if (index - c) >= 0 else 0
         end = index + 1 + c if (index + 1 + c) <= len(arr) else len(arr)
-        
+
         content = arr[start:index]
-        content2 = arr[index+1:end]
+        content2 = arr[index + 1:end]
         content.extend(content2)
         # item = {'center':arr[index],'context':content}
         item = (word, content)

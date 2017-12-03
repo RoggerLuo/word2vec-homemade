@@ -9,13 +9,24 @@ def connect2Mysql():
     return conn, cursor
 
 
-def fetch_entry_untreated(version='0'):
+def mark_entry_as_treated(entryId, version=0):
+    newVersion = version + 1
+    conn, cursor = connect2Mysql()
+    cursor.execute('update t_item set version = %s where id = %s', [
+                   newVersion, entryId])
+    insert_id = cursor.lastrowid
+    conn.commit()
+    cursor.close()
+
+
+def fetch_entry_untreated(version=0):
     conn, cursor = connect2Mysql()
     cursor.execute(
         'select * from t_item where version = %s limit 0,1', (version,))
     values = cursor.fetchall()
     cursor.close()
     conn.close()
+
     if values[0] == None:
         print('||||||||||||||没有读取到|||||||||||||')
         return False
@@ -23,23 +34,15 @@ def fetch_entry_untreated(version='0'):
         print('||||||||||||||读取到一条未运算的文章|||||||||||||')
         return values[0]
 
-def update_vec(entry,vec):
+
+def update_vec(entry, vec):
     vec = vec.tolist()
-    vec = [ round(v,5) for v in vec]
+    vec = [round(v, 5) for v in vec]
     vec = json.dumps(vec)
 
     conn, cursor = connect2Mysql()
-    cursor.execute('update t_vocabulary set vector = %s where id = %s', [vec, entry[0]])
-    insert_id = cursor.lastrowid
-    conn.commit()
-    cursor.close()
-
-
-def mark_entry_as_treated(entryId, version=0):
-    newVersion = version + 1
-    conn, cursor = connect2Mysql()
-    cursor.execute('update t_item set version = %s where id = %s', [
-                   newVersion, entryId])
+    cursor.execute(
+        'update t_vocabulary set vector = %s where id = %s', [vec, entry[0]])
     insert_id = cursor.lastrowid
     conn.commit()
     cursor.close()
@@ -55,6 +58,7 @@ def getWordEntrys(word):
 
 
 def insertVocabulary(word, startVector):
+    startVector = [round(v, 5) for v in startVector]
     startStr = json.dumps(startVector)
     conn, cursor = connect2Mysql()
     cursor.execute('insert into t_vocabulary (word, vector) values (%s, %s)', [
@@ -81,4 +85,3 @@ def getNegSameples(contextWords, k=10):
                 return uniqueSamples
     # print(uniqueSamples)
     return uniqueSamples
-

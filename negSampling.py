@@ -18,8 +18,8 @@ def calcGrad(activation, vector):
 
 
 def get_o_vec_from_entry(entry):
-    current_vector = np.array(entry[2])  # 测试的时候把json取消
-    # current_vector = np.array(json.loads(entry[2]))  # 测试的时候把json取消
+    # current_vector = np.array(entry[2])  # 测试的时候把json取消
+    current_vector = np.array(json.loads(entry[2]))  # 测试的时候把json取消
     halfNum = int(len(current_vector) / 2)
     curr_o_vec = current_vector[halfNum:]
     return curr_o_vec
@@ -34,8 +34,8 @@ def get_cost_and_grad(centerword_vector, target_vector, negSamples_entrys, K=10)
 
     ___cost = - np.log(activation)
 
-    cen_i_grad = calcGrad(activation, target_o_vec)
-    _target_o_grad = calcGrad(activation, cen_i_vec)
+    ___cen_i_grad = calcGrad(activation, target_o_vec)
+    ___target_o_grad = calcGrad(activation, cen_i_vec)
 
     ___negSamples_grad = []
     for entry in negSamples_entrys:
@@ -47,19 +47,19 @@ def get_cost_and_grad(centerword_vector, target_vector, negSamples_entrys, K=10)
         ___cost -= np.log(activation)
 
         # 2 input word grad, 注意是减去
-        cen_i_grad -= calcGrad(activation, curr_o_vec)
+        ___cen_i_grad -= calcGrad(activation, curr_o_vec)
 
         # 3 output word grad
         curr_grad = - calcGrad(activation, cen_i_vec)
         curr_grad = curr_grad.tolist()
         ___negSamples_grad.append(curr_grad)
 
-    # ___cen_grad = np.concatenate((cen_i_grad, cen_o_grad), axis=0)
+    # ___cen_grad = np.concatenate((___cen_i_grad, cen_o_grad), axis=0)
 
-    return ___cost, cen_i_grad, ___negSamples_grad,_target_o_grad
-
-
+    return ___cost, ___cen_i_grad, ___negSamples_grad,___target_o_grad
 
 
 
-    
+
+
+
