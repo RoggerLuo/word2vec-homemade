@@ -5,7 +5,7 @@ import json
 import db_model
 import negSampling
 from q2_sigmoid import sigmoid, sigmoid_grad
-
+# import time
 
 def update_o_grad(entry, grad, step):
     vec = np.array(json.loads(entry[2]))
@@ -37,7 +37,8 @@ def run(centerword, contextWords, sampleNum, step):
         targetword_vector = json.loads(
             db_model.getWordEntrys(targetword)[0][2])
 
-        negSamples_entrys = db_model.getNegSameples(contextWords, sampleNum)
+        negSamples_entrys = db_model.getNegSameples(contextWords, sampleNum) #平均 10 ms
+
 
         ___cost, ___cen_i_grad, ___negSamples_grad, ___target_o_grad = negSampling.get_cost_and_grad(
             centerword_vector, targetword_vector, negSamples_entrys)
@@ -49,14 +50,16 @@ def run(centerword, contextWords, sampleNum, step):
         else:
             gradIn += ___cen_i_grad
 
-        for index in range(len(negSamples_entrys)):
+
+        for index in range(len(negSamples_entrys)): # 需要20毫秒
             curr_entry = negSamples_entrys[index]
             curr_grad = ___negSamples_grad[index]
             curr_vec = update_o_grad(curr_entry, curr_grad, step)
             db_model.update_vec(curr_entry, curr_vec)
+
     
     if len(gradIn) == 0: return 0.0
-    
+
     i_vec = update_i_grad(centerword_entry, gradIn, step)
     db_model.update_vec(centerword_entry, i_vec)
 

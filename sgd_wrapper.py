@@ -3,7 +3,7 @@ import random
 import skipgram
 import db_model
 import wv
-
+# import time
 
 def word2vec_sgd_wrapper(entry):
     sampleNum = 4
@@ -14,8 +14,12 @@ def word2vec_sgd_wrapper(entry):
     for pair in trainingPairs:
         centerword = pair[0]
         contextWords = pair[1]
+
+
         _cost = skipgram.run(centerword, contextWords, sampleNum, step)
         cost += _cost
+
+
     print(cost)
 
 
@@ -24,5 +28,7 @@ for i in range(100):
     version = 0
     entry = db_model.fetch_entry_untreated(version)
     for j in range(10):
+        # startTime=time.time()
         word2vec_sgd_wrapper(entry)
+        # print("word2vec_sgd_wrapper training took %f seconds" % (time.time() - startTime))
     db_model.mark_entry_as_treated(entry[0], version)

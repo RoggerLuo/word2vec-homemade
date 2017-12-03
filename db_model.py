@@ -1,6 +1,6 @@
 import mysql.connector
 import json
-
+import time
 
 def connect2Mysql():
     conn = mysql.connector.connect(
@@ -35,11 +35,10 @@ def fetch_entry_untreated(version=0):
         return values[0]
 
 
-def update_vec(entry, vec):
+def update_vec(entry, vec): #需要5ms
     vec = vec.tolist()
     vec = [round(v, 5) for v in vec]
     vec = json.dumps(vec)
-
     conn, cursor = connect2Mysql()
     cursor.execute(
         'update t_vocabulary set vector = %s where id = %s', [vec, entry[0]])
