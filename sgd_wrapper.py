@@ -7,7 +7,28 @@ from getContext import getTrainingPairs_of_one_note
 # from q1_softmax import softmax
 # from q2_gradcheck import gradcheck_naive
 # from q2_sigmoid import sigmoid, sigmoid_grad
-def word2vec_sgd_wrapper(word2vecModel, tokens, wordVectors, dataset, C, word2vecCostAndGradient):
+def word2vec_sgd_wrapper(string):
+    cost = 0.0
+    windowLength = 3
+    trainingPairs, tokens, wordVectors = wv.getDataset(string, windowLength)
+    gradIn = []
+    for pair in trainingPairs:
+        centerword = pair[0]
+        contextWords = pair[1]
+        sampleNum = 4
+        centerword_vector = json.loads(db_model.getWordEntrys(centerword)[0][2])
+        _cost , _gradIn = skipgram(centerword_vector, contextWords)
+        cost += _cost
+        if len(gradIn) == 0:
+            gradIn = _gradIn
+        else:
+            gradIn += _gradIn
+
+
+
+
+
+
     if word2vecModel == skipgram:
         denom = 1
     else:
@@ -17,12 +38,6 @@ def word2vec_sgd_wrapper(word2vecModel, tokens, wordVectors, dataset, C, word2ve
 
     # wordeVectors是把input和output都拼在了一起
     grad = np.zeros(wordVectors.shape)
-    # inputVectors = wordVectors[:int(N/2),:] #前一半
-    # outputVectors = wordVectors[int(N/2):,:] #后一半
-    
-    # N = wordVectors.shape[0] # vacabulary的总length
-    # inputVectors = wordVectors[:,:int(N/2)] #前一半
-    # outputVectors = wordVectors[:,int(N/2):] #后一半
     
     #准备要training的 word pairs
     windowLength = 5

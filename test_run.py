@@ -7,11 +7,16 @@ import time
 from sgd_wrapper import *
 from sgd import *
 from datasetFactory import getdataset
-from negSamplingCostAndGradient import negSamplingCostAndGradient
+import negSampling
 
 import db_model
 import wv
 
+
+cost, grad = f(x)
+x = x - grad*step
+
+cost, gradIn, gradOut = skipgram(string)
 # Context size
 C = 3 #5
 

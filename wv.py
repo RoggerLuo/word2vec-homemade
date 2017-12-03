@@ -39,12 +39,12 @@ def filterWord(arr):
     for word in arr:
         if word not in ignoreds:
             filteredArr.append(word)
-    print(filteredArr)
+    # print(filteredArr)
     return filteredArr
 
 
 def getIdAndVector(word):
-    entrys = db_model.getWordEntry(word)
+    entrys = db_model.getWordEntrys(word)
     if len(entrys) == 0:
         startVector = getStartVector()
         insert_id = db_model.insertVocabulary(word, startVector)
