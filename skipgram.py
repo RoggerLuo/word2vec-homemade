@@ -15,9 +15,14 @@ def update_o_grad(entry, grad, step):
 
 
 def update_i_grad(entry, grad, step):
+    # print(entry)
     vec = np.array(json.loads(entry[2]))
     zeroArr = np.zeros(int(len(vec) / 2))
     vec_grad = np.concatenate((np.array(grad), zeroArr), axis=0)
+    # print(len(vec))
+    # print(len(vec_grad))
+    # print(len(grad))
+
     return vec - vec_grad * step
 
 
@@ -26,16 +31,19 @@ def run(centerword, contextWords, sampleNum, step):
     centerword_vector = json.loads(centerword_entry[2])
     cost = 0.0
     gradIn = []
-    # print('centerword:', centerword)
 
     for targetword in contextWords:
-        # print('___targetword:', targetword)
-        targetword_vector = json.loads(db_model.getWordEntrys(targetword)[0][2])
+
+        targetword_vector = json.loads(
+            db_model.getWordEntrys(targetword)[0][2])
+
         negSamples_entrys = db_model.getNegSameples(contextWords, sampleNum)
+
         ___cost, ___cen_i_grad, ___negSamples_grad, ___target_o_grad = negSampling.get_cost_and_grad(
             centerword_vector, targetword_vector, negSamples_entrys)
 
         cost += ___cost
+
         if len(gradIn) == 0:
             gradIn = ___cen_i_grad
         else:
@@ -46,7 +54,9 @@ def run(centerword, contextWords, sampleNum, step):
             curr_grad = ___negSamples_grad[index]
             curr_vec = update_o_grad(curr_entry, curr_grad, step)
             db_model.update_vec(curr_entry, curr_vec)
-
+    
+    if len(gradIn) == 0: return 0.0
+    
     i_vec = update_i_grad(centerword_entry, gradIn, step)
     db_model.update_vec(centerword_entry, i_vec)
 
