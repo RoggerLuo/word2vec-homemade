@@ -41,7 +41,7 @@ def update_vec(entry, vec): #需要5ms
     vec = json.dumps(vec)
     conn, cursor = connect2Mysql()
     cursor.execute(
-        'update t_vocabulary set vector = %s where id = %s', [vec, entry[0]])
+        'update t_vocabulary set vector = %s where id = %s', [vec, entry['id']])
     insert_id = cursor.lastrowid
     conn.commit()
     cursor.close()
@@ -80,7 +80,5 @@ def getNegSameples(contextWords, k=10):
         if entry[1] not in contextWords:
             uniqueSamples.append(entry)
             if len(uniqueSamples) == k:
-                # print(uniqueSamples)
                 return uniqueSamples
-    # print(uniqueSamples)
     return uniqueSamples

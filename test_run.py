@@ -17,6 +17,7 @@ cost, grad = f(x)
 x = x - grad*step
 
 cost, gradIn, gradOut = skipgram(string)
+
 # Context size
 C = 3 #5
 

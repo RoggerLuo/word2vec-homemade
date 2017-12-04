@@ -4,6 +4,7 @@ import json
 from q2_sigmoid import sigmoid, sigmoid_grad
 
 
+
 def divideVec(vec):
     N = len(vec)
     a = np.array(vec[:int(N / 2)])  # 前一半
@@ -18,14 +19,27 @@ def calcGrad(activation, vector):
 
 
 def get_o_vec_from_entry(entry):
-    # current_vector = np.array(entry[2])  # 测试的时候把json取消
-    current_vector = np.array(json.loads(entry[2]))  # 测试的时候把json取消
+    current_vector = np.array(entry['vector'])  # 测试的时候把json取消
+    # current_vector = np.array(json.loads(entry[2]))  # 测试的时候把json取消
     halfNum = int(len(current_vector) / 2)
     curr_o_vec = current_vector[halfNum:]
     return curr_o_vec
 
+# def get_cost_and_grad_test(centerword_vector, target_vector, negSamples_list, K=10):
 
-def get_cost_and_grad(centerword_vector, target_vector, negSamples_entrys, K=10):
+    # assert x.shape == orig_shape
+    # assert x.shape == orig_shape
+
+def get_cost_and_grad(centerword_vector, target_vector, negSamples_list, K=10):
+    
+    assert type(centerword_vector) == np.ndarray
+    assert type(negSamples_list) == list
+    assert type(negSamples_list[0]) == dict
+    assert type(negSamples_list[0]['id']) == int
+    assert type(negSamples_list[0]['vector']) == np.ndarray
+    assert len(negSamples_list[0]['vector']) == 16
+
+
     # _下划线打头的变量为要返回的值
     cen_i_vec, cen_o_vec = divideVec(centerword_vector)
     target_i_vec, target_o_vec = divideVec(target_vector)
@@ -38,7 +52,8 @@ def get_cost_and_grad(centerword_vector, target_vector, negSamples_entrys, K=10)
     ___target_o_grad = calcGrad(activation, cen_i_vec)
 
     ___negSamples_grad = []
-    for entry in negSamples_entrys:
+
+    for entry in negSamples_list:
         curr_o_vec = get_o_vec_from_entry(entry)
         dotProduct = np.sum(curr_o_vec * cen_i_vec)
         activation = sigmoid(-dotProduct)
@@ -51,14 +66,20 @@ def get_cost_and_grad(centerword_vector, target_vector, negSamples_entrys, K=10)
 
         # 3 output word grad
         curr_grad = - calcGrad(activation, cen_i_vec)
-        curr_grad = curr_grad.tolist()
+        
         ___negSamples_grad.append(curr_grad)
 
-    # ___cen_grad = np.concatenate((___cen_i_grad, cen_o_grad), axis=0)
+    assert type(___cen_i_grad) == np.ndarray
+    assert len(___cen_i_grad) == 8
+    
+    assert type(___target_o_grad) == np.ndarray
+    assert len(___target_o_grad) == 8
 
+    assert type(___negSamples_grad) == list
+    assert type(___negSamples_grad[0]) == np.ndarray
+    assert len(___negSamples_grad[0]) == 8
+    
     return ___cost, ___cen_i_grad, ___negSamples_grad,___target_o_grad
-
-
 
 
 
