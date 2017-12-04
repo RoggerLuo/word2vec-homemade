@@ -9,7 +9,7 @@ ignoreds = ['，', ',', '的', '是', '\n', ' ']
 
 def getStartVector():
     randomStartVector = (np.random.rand(dimVectors) - 0.5)
-    zerosVector = np.zeros((dimVectors))
+    zerosVector = np.random.rand(dimVectors)/10  #np.zeros((dimVectors))
     wordVectors = np.concatenate(
         (randomStartVector / dimVectors, zerosVector), axis=0)
     # print(wordVectors)

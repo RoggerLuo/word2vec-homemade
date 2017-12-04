@@ -74,11 +74,15 @@ def getNegSameples(contextWords, k=10):
     values = cursor.fetchall()
     cursor.close()
     conn.close()
+    return values
+    
+    # uniqueSamples = []
+    # for entry in values:
+    #     if entry[1] not in contextWords:
+    #         uniqueSamples.append(entry)
+    #         if len(uniqueSamples) == k:
+    #             return uniqueSamples
+    # return uniqueSamples
 
-    uniqueSamples = []
-    for entry in values:
-        if entry[1] not in contextWords:
-            uniqueSamples.append(entry)
-            if len(uniqueSamples) == k:
-                return uniqueSamples
-    return uniqueSamples
+
+
