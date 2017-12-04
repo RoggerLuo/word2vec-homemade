@@ -8,6 +8,7 @@ from q2_sigmoid import sigmoid, sigmoid_grad
 
 
 def update_o_grad(entry, grad, step):
+    # global step
     vec = entry['vector']
     zeroArr = np.zeros(int(len(vec) / 2))
     vec_grad = np.concatenate((zeroArr, np.array(grad)), axis=0)
