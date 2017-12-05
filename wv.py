@@ -4,7 +4,7 @@ import json
 import numpy as np
 
 dimVectors = 8
-ignoreds = ['，', ',', '的', '是', '\n', ' ']
+ignoreds = ['，', ',', '的', '是', '\n', ' ','(',')','.','/']
 
 
 def getStartVector():
