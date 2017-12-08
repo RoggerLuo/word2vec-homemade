@@ -33,7 +33,6 @@ def getEntry_and_makeList(centerword):
 def run(centerword, contextWords, negSamples_list):
     assert type(centerword) == str
     assert type(contextWords) == list
-    # print(type(negSamples_list))
     assert type(negSamples_list) == list
 
     cen_entry, cent_vec = getEntry_and_makeList(centerword)
